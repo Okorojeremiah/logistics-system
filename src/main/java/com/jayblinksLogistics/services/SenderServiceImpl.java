@@ -1,27 +1,37 @@
 package com.jayblinksLogistics.services;
 
-import com.jayblinksLogistics.dto.*;
+import com.jayblinksLogistics.dto.request.AddOrderRequest;
+import com.jayblinksLogistics.dto.request.LoginRequest;
+import com.jayblinksLogistics.dto.request.UpdateUserRequest;
+import com.jayblinksLogistics.dto.request.UserRegistrationRequest;
+import com.jayblinksLogistics.dto.response.AddOrderResponse;
+import com.jayblinksLogistics.dto.response.LoginResponse;
+import com.jayblinksLogistics.dto.response.UpdateUserResponse;
+import com.jayblinksLogistics.dto.response.UserRegistrationResponse;
 import com.jayblinksLogistics.exception.*;
 import com.jayblinksLogistics.models.*;
-import com.jayblinksLogistics.repository.OrderRepository;
 import com.jayblinksLogistics.repository.SenderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+//@Qualifier("senderServiceImpl")
 @Component
-public class SenderServiceImpl implements UserServices{
+public class SenderServiceImpl implements UserServices, SenderServices{
 
     @Autowired
     private SenderRepository senderRepository;
-    @Autowired
-    private OrderService orderService;
 
+    private final OrderService orderService;
+    @Lazy
     @Autowired
-    private OrderRepository orderRepository;
+    public  SenderServiceImpl(OrderService orderService){
+        this.orderService = orderService;
+    }
+
     @Override
     public UserRegistrationResponse register(UserRegistrationRequest userRegistrationRequest) {
         Sender sender = buildSender(userRegistrationRequest);
@@ -91,11 +101,19 @@ public class SenderServiceImpl implements UserServices{
         senderRepository.save(foundSender);
         return foundSender;
     }
+    @Override
+    public Sender findSender(String id){
+        return senderRepository.findByUserId(id).orElseThrow(()->new UserUpdateException("Wrong user id"));
+    }
+    @Override
+    public void deleteSender(String id){
+        Sender sender = senderRepository.findByUserId(id).orElseThrow(()->new UserNotFoundException("Sender not found"));
+        senderRepository.delete(sender);
+    }
 
     public AddOrderResponse placeOrder(AddOrderRequest addOrderRequest){
         Sender sender = senderRepository.findByUserId(addOrderRequest.getSenderId()).orElseThrow(()-> new UserNotFoundException("Sender not found"));
         Order order = orderService.addOrder(addOrderRequest);
-        sender.getOrders().add(order);
 
         AddOrderResponse response = new AddOrderResponse();
         response.setOrderId(order.getOrderId());
@@ -106,34 +124,11 @@ public class SenderServiceImpl implements UserServices{
 
         return response;
     }
-
-//    public void CancelOrder(String orderId){
-//        orderRepository.deleteById(orderId);
-//    }
-//
-//    public void cancelAllOrders(String senderId){
-//        Sender sender = senderRepository.findByUserId(senderId).orElseThrow(()-> new UserNotFoundException("Wrong id"));
-//        List<Order> orders = sender.getOrders();
-//        orderRepository.deleteAll(orders);
-//    }
+    public void cancelOrder(String orderId){
+        orderService.deleteOrder(orderId);
+    }
 
     public List<Order> viewOrderHistory(String senderId){
-        Sender sender = senderRepository.findByUserId(senderId).orElseThrow(()-> new UserNotFoundException("Wrong id"));
-        return orderRepository.findAllById(sender.getUserId());
-    }
-
-    @Override
-    public User getUserById(String id) {
-        return null;
-    }
-
-    @Override
-    public void deleteUser(String userId) {
-
-    }
-
-    @Override
-    public void deleteAllUser() {
-
+        return orderService.viewOrderHistory(senderId);
     }
 }

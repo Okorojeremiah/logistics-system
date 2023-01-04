@@ -1,28 +1,36 @@
 package com.jayblinksLogistics.services;
 
-import com.jayblinksLogistics.dto.*;
+import com.jayblinksLogistics.dto.request.DeliveryRequest;
+import com.jayblinksLogistics.dto.request.LoginRequest;
+import com.jayblinksLogistics.dto.request.UpdateUserRequest;
+import com.jayblinksLogistics.dto.request.UserRegistrationRequest;
+import com.jayblinksLogistics.dto.response.DeliveryResponse;
+import com.jayblinksLogistics.dto.response.LoginResponse;
+import com.jayblinksLogistics.dto.response.UpdateUserResponse;
+import com.jayblinksLogistics.dto.response.UserRegistrationResponse;
 import com.jayblinksLogistics.exception.UserLoginException;
 import com.jayblinksLogistics.exception.UserRegistrationException;
 import com.jayblinksLogistics.exception.UserUpdateException;
-import com.jayblinksLogistics.models.Address;
-import com.jayblinksLogistics.models.Courier;
-import com.jayblinksLogistics.models.Sender;
-import com.jayblinksLogistics.models.User;
+import com.jayblinksLogistics.models.*;
 import com.jayblinksLogistics.repository.CourierRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
+@Qualifier("courierServiceImpl")
 @Component
-public class CourierServiceImpl implements UserServices{
+public class CourierServiceImpl implements UserServices, CourierServices{
 
-    private CourierRepository courierRepository;
+    private final CourierRepository courierRepository;
+    private final OrderService orderService;
 
     @Autowired
-    public CourierServiceImpl(CourierRepository courierRepository){
+    public CourierServiceImpl(CourierRepository courierRepository, OrderService orderService){
         this.courierRepository = courierRepository;
+        this.orderService = orderService;
     }
 
     @Override
@@ -93,19 +101,28 @@ public class CourierServiceImpl implements UserServices{
         courierRepository.save(foundCourier);
         return foundCourier;
     }
-
     @Override
-    public User getUserById(String id) {
-        return null;
+    public Courier findCourier(String id){
+        return courierRepository.findByUserId(id).orElseThrow(()->new UserUpdateException("Wrong user id"));
     }
 
     @Override
-    public void deleteUser(String userId) {
-
+    public void deleteCourier(String id){
+        courierRepository.deleteById(id);
     }
 
     @Override
-    public void deleteAllUser() {
+    public List<Order> findOrdersByCurrentStatus(OrderStatus orderStatus) {
+        return orderService.getOrdersByCurrentStatus(orderStatus);
+    }
 
+    @Override
+    public DeliveryResponse confirmDelivery(DeliveryRequest deliveryRequest) {
+        return orderService.confirmDelivery(deliveryRequest);
+    }
+
+    @Override
+    public OrderStatus checkDeliveryStatus(String orderId){
+        return orderService.checkOrderStatus(orderId);
     }
 }

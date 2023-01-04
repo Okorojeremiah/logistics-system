@@ -1,16 +1,16 @@
 package com.jayblinksLogistics.controller;
 
-
-import com.jayblinksLogistics.dto.request.AddOrderRequest;
 import com.jayblinksLogistics.dto.request.LoginRequest;
 import com.jayblinksLogistics.dto.request.UpdateUserRequest;
 import com.jayblinksLogistics.dto.request.UserRegistrationRequest;
-import com.jayblinksLogistics.dto.response.AddOrderResponse;
 import com.jayblinksLogistics.dto.response.LoginResponse;
 import com.jayblinksLogistics.dto.response.UpdateUserResponse;
 import com.jayblinksLogistics.dto.response.UserRegistrationResponse;
+import com.jayblinksLogistics.models.Courier;
 import com.jayblinksLogistics.models.Order;
-import com.jayblinksLogistics.services.SenderServices;
+import com.jayblinksLogistics.models.OrderStatus;
+import com.jayblinksLogistics.models.Sender;
+import com.jayblinksLogistics.services.AdminServices;
 import com.jayblinksLogistics.services.UserServices;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +22,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/Sender")
-public class SenderController {
+@RequestMapping("/api/v1/admin")
+public class AdminController {
 
     private final UserServices userServices;
-    private final SenderServices senderServices;
+    private final AdminServices adminServices;
 
     @Autowired
-    public SenderController(@Qualifier("senderServiceImpl") UserServices userServices, SenderServices senderServices){
+    public AdminController(@Qualifier("adminServiceImpl") UserServices userServices, AdminServices adminServices){
         this.userServices = userServices;
-        this.senderServices = senderServices;
+        this.adminServices = adminServices;
     }
 
     @PostMapping("/register")
@@ -52,22 +52,34 @@ public class SenderController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/viewOrderHistory/{senderId}")
-    public ResponseEntity<List<Order>> viewOrderHistory(@RequestBody @PathVariable String senderId){
-        List<Order> orders = senderServices.viewOrderHistory(senderId);
+    @GetMapping("/fetchOrdersByCurrentStatus/{orderStatus}")
+    public ResponseEntity<List<Order>> orders(@RequestBody @PathVariable OrderStatus orderStatus){
+        List<Order> orders = adminServices.findOrdersByCurrentStatus(orderStatus);
         return ResponseEntity.status(HttpStatus.OK).body(orders);
     }
-    @DeleteMapping("/cancelOrder/{orderId}")
-    public void cancelOrder(@RequestBody @PathVariable String orderId){
-        senderServices.cancelOrder(orderId);
+
+    @GetMapping("/fetchAll")
+    public ResponseEntity<List<Order>> viewAllOrders(){
+        return ResponseEntity.ok(adminServices.viewAllOrders());
     }
 
-    @PostMapping("/placeOrder")
-    public ResponseEntity<AddOrderResponse> placeOrder(@RequestBody @Valid AddOrderRequest addOrderRequest){
-        AddOrderResponse response = senderServices.placeOrder(addOrderRequest);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    @GetMapping("/findSender/{senderId}")
+    public ResponseEntity<Sender> findSender(@RequestBody @PathVariable String senderId){
+        return ResponseEntity.ok(adminServices.findSender(senderId));
     }
 
+    @GetMapping("/findCourier/{courierId}")
+    public ResponseEntity<Courier> findCourier(@RequestBody @PathVariable String courierId){
+        return ResponseEntity.ok(adminServices.findCourier(courierId));
+    }
 
+    @DeleteMapping("/deleteSender/{senderId}")
+    public void deleteSender(@RequestBody @PathVariable String senderId){
+        adminServices.deleteSender(senderId);
+    }
+
+    @DeleteMapping("/deleteCourier/{courierId}")
+    public void deleteCourier(@RequestBody @PathVariable String courierId){
+        adminServices.deleteSender(courierId);
+    }
 }
-

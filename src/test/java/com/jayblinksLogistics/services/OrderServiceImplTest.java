@@ -1,8 +1,6 @@
 package com.jayblinksLogistics.services;
 
-import com.jayblinksLogistics.JayblinksLogisticsApplication;
-import com.jayblinksLogistics.dto.AddOrderRequest;
-import com.jayblinksLogistics.dto.AddOrderResponse;
+import com.jayblinksLogistics.dto.request.AddOrderRequest;
 import com.jayblinksLogistics.models.*;
 import com.jayblinksLogistics.repository.OrderRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -12,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -62,6 +60,7 @@ class OrderServiceImplTest {
         Order order = orderService.addOrder(addOrderRequest);
         assertNotNull(order);
         assertNotNull(order.getOrderId());
+        System.out.println(order);
     }
 
     @Test
@@ -73,8 +72,25 @@ class OrderServiceImplTest {
 
     @Test
     void getAllOrders() {
-        List<Order> foundOrder = orderService.getAllOrders();
-        assertNotNull(foundOrder);
+        List<Order> foundOrders = orderService.getAllOrders();
+        assertNotNull(foundOrders);
+    }
+
+    @Test
+    void deleteOrder(){
+        Order order = orderService.addOrder(addOrderRequest);
+        orderService.deleteOrder(order.getOrderId());
+        Optional<Order> foundOrder = orderRepository.findById(order.getOrderId());
+        assertEquals(Optional.empty(), foundOrder);
+    }
+
+    @Test
+    void deleteAllOrders(){
+        orderService.addOrder(addOrderRequest);
+        orderService.deleteAllOrders();
+        List<Order> orders = new ArrayList<>();
+        List<Order> foundOrders = orderRepository.findAll();
+        assertEquals(foundOrders, orders);
     }
 
 }

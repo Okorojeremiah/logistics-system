@@ -1,7 +1,14 @@
 package com.jayblinksLogistics.services;
 
 import com.jayblinksLogistics.JayblinksLogisticsApplication;
-import com.jayblinksLogistics.dto.*;
+import com.jayblinksLogistics.dto.request.AddOrderRequest;
+import com.jayblinksLogistics.dto.request.LoginRequest;
+import com.jayblinksLogistics.dto.request.UpdateUserRequest;
+import com.jayblinksLogistics.dto.request.UserRegistrationRequest;
+import com.jayblinksLogistics.dto.response.AddOrderResponse;
+import com.jayblinksLogistics.dto.response.LoginResponse;
+import com.jayblinksLogistics.dto.response.UpdateUserResponse;
+import com.jayblinksLogistics.dto.response.UserRegistrationResponse;
 import com.jayblinksLogistics.models.Address;
 import com.jayblinksLogistics.models.Category;
 import com.jayblinksLogistics.models.Item;
@@ -23,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class SenderServiceImplTest {
     private UserRegistrationRequest userRegistrationRequest;
     private LoginRequest loginRequest;
-    private UpdateUserRequest updateUserRequest;
     private Address address;
     private List<Item> items;
 
@@ -32,8 +38,14 @@ class SenderServiceImplTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+
+    @Qualifier("senderServiceImpl")
     @Autowired
-    private SenderServiceImpl senderServices;
+    private UserServices userServices;
+
+    @Autowired
+    private SenderServices senderServices;
 
 
 
@@ -72,32 +84,32 @@ class SenderServiceImplTest {
     }
 
     @Test
-    void register() {
-        UserRegistrationResponse response = senderServices.register(userRegistrationRequest);
+    void testThatASenderCanBeRegister() {
+        UserRegistrationResponse response = userServices.register(userRegistrationRequest);
         assertNotNull(response);
         assertNotNull(response.getMessage());
         assertEquals(response.getStatusCode(), 201);
     }
 
     @Test
-    void login() {
-        UserRegistrationResponse registrationResponse = senderServices.register(userRegistrationRequest);
+    void testThatASenderCanLogin() {
+        UserRegistrationResponse registrationResponse = userServices.register(userRegistrationRequest);
         assertNotNull(registrationResponse);
 
-        LoginResponse loginResponse = senderServices.login(loginRequest);
+        LoginResponse loginResponse = userServices.login(loginRequest);
         System.out.println(loginResponse);
         assertNotNull(loginResponse);
     }
 
     @Test
-    void update() {
-        UserRegistrationResponse registrationResponse = senderServices.register(userRegistrationRequest);
+    void testThatASenderDetailsCanBeUpdated() {
+        UserRegistrationResponse registrationResponse = userServices.register(userRegistrationRequest);
         assertNotNull(registrationResponse);
 
-        LoginResponse loginResponse = senderServices.login(loginRequest);
+        LoginResponse loginResponse = userServices.login(loginRequest);
         assertNotNull(loginResponse);
 
-        updateUserRequest = new UpdateUserRequest();
+        UpdateUserRequest updateUserRequest = new UpdateUserRequest();
         updateUserRequest.setId(registrationResponse.getUserId());
         updateUserRequest.setFirstName("Martha");
         updateUserRequest.setLastName("Danladi");
@@ -106,17 +118,17 @@ class SenderServiceImplTest {
         updateUserRequest.setPhoneNumber("07041941942");
         updateUserRequest.setPassword("Maqueen25");
 
-        UpdateUserResponse updateResponse = senderServices.update(updateUserRequest);
+        UpdateUserResponse updateResponse = userServices.update(updateUserRequest);
         assertNotNull(updateResponse);
         assertEquals(updateResponse.getStatusCode(), 201);
     }
 
     @Test
-    void placeOrder(){
-        UserRegistrationResponse registrationResponse = senderServices.register(userRegistrationRequest);
+    void testThatASenderCanPlaceOrder(){
+        UserRegistrationResponse registrationResponse = userServices.register(userRegistrationRequest);
         assertNotNull(registrationResponse);
 
-        LoginResponse loginResponse = senderServices.login(loginRequest);
+        LoginResponse loginResponse = userServices.login(loginRequest);
         assertNotNull(loginResponse);
 
         AddOrderRequest addOrderRequest = new AddOrderRequest();
@@ -130,17 +142,14 @@ class SenderServiceImplTest {
         AddOrderResponse response = senderServices.placeOrder(addOrderRequest);
         assertNotNull(response);
         System.out.println(response);
-        Optional<Order> orders = orderRepository.findById(response.getSenderId());
-        System.out.println(orders);
-        assertNotNull(response.getSenderId());
     }
 
     @Test
-    void viewAllOrders(){
-        UserRegistrationResponse registrationResponse = senderServices.register(userRegistrationRequest);
+    void testThatASenderCAnViewTheirOrderHistory(){
+        UserRegistrationResponse registrationResponse = userServices.register(userRegistrationRequest);
         assertNotNull(registrationResponse);
 
-        LoginResponse loginResponse = senderServices.login(loginRequest);
+        LoginResponse loginResponse = userServices.login(loginRequest);
         assertNotNull(loginResponse);
 
         AddOrderRequest addOrderRequest = new AddOrderRequest();
@@ -154,9 +163,55 @@ class SenderServiceImplTest {
         AddOrderResponse response = senderServices.placeOrder(addOrderRequest);
         assertNotNull(response);
 
+        AddOrderRequest addOrderRequest2 = new AddOrderRequest();
+        addOrderRequest2.setSenderId(registrationResponse.getUserId());
+        addOrderRequest2.setItems(items);
+        addOrderRequest2.setReceiverFirstName("Elder");
+        addOrderRequest2.setReceiverLastName("Kogi");
+        addOrderRequest2.setReceiverPhoneNumber("08036537905");
+        addOrderRequest2.setReceiverAddress(address);
+
+        AddOrderResponse response2 = senderServices.placeOrder(addOrderRequest2);
+        assertNotNull(response2);
+
         List<Order> orders = senderServices.viewOrderHistory(response.getSenderId());
         assertNotNull(orders);
         System.out.println(orders);
     }
+    @Test
+    void testThatASenderCanCancelAnOrder() {
+        UserRegistrationResponse registrationResponse = userServices.register(userRegistrationRequest);
+        assertNotNull(registrationResponse);
 
+        LoginResponse loginResponse = userServices.login(loginRequest);
+        assertNotNull(loginResponse);
+
+        AddOrderRequest addOrderRequest = new AddOrderRequest();
+        addOrderRequest.setSenderId(registrationResponse.getUserId());
+        addOrderRequest.setItems(items);
+        addOrderRequest.setReceiverFirstName("Disu");
+        addOrderRequest.setReceiverLastName("Alamin");
+        addOrderRequest.setReceiverPhoneNumber("08101558612");
+        addOrderRequest.setReceiverAddress(address);
+
+        AddOrderResponse firstResponse = senderServices.placeOrder(addOrderRequest);
+        assertNotNull(firstResponse);
+
+        AddOrderRequest addOrderRequest2 = new AddOrderRequest();
+        addOrderRequest2.setSenderId(registrationResponse.getUserId());
+        addOrderRequest2.setItems(items);
+        addOrderRequest2.setReceiverFirstName("Elder");
+        addOrderRequest2.setReceiverLastName("Kogi");
+        addOrderRequest2.setReceiverPhoneNumber("08036537905");
+        addOrderRequest2.setReceiverAddress(address);
+
+        AddOrderResponse secondResponse = senderServices.placeOrder(addOrderRequest2);
+        assertNotNull(secondResponse);
+
+        senderServices.cancelOrder(firstResponse.getOrderId());
+        List<Order> orders = senderServices.viewOrderHistory(registrationResponse.getUserId());
+        System.out.println(orders);
+        Optional<Order> order = orderRepository.findOrderByOrderId(firstResponse.getOrderId());
+        assertEquals(Optional.empty(), order);
+    }
 }

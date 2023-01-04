@@ -1,4 +1,4 @@
-package com.jayblinksLogistics.dto;
+package com.jayblinksLogistics.dto.request;
 
 import com.jayblinksLogistics.models.Address;
 import com.jayblinksLogistics.models.Category;
@@ -29,7 +29,6 @@ public class AddOrderRequest {
     private String receiverLastName;
     @Pattern(regexp = "^\\d{11}$", message = "Invalid phone number")
     private String receiverPhoneNumber;
-    @NotBlank
     private Address receiverAddress;
 
 

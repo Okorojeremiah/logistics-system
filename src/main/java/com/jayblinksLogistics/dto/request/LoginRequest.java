@@ -1,4 +1,4 @@
-package com.jayblinksLogistics.dto;
+package com.jayblinksLogistics.dto.request;
 
 
 import jakarta.validation.constraints.Email;
