@@ -1,4 +1,4 @@
-package com.jayblinksLogistics.services;
+package com.jayblinksLogistics.services.serviceImplementations;
 
 import com.jayblinksLogistics.dto.request.LoginRequest;
 import com.jayblinksLogistics.dto.request.UpdateUserRequest;
@@ -11,6 +11,7 @@ import com.jayblinksLogistics.exception.UserRegistrationException;
 import com.jayblinksLogistics.exception.UserUpdateException;
 import com.jayblinksLogistics.models.*;
 import com.jayblinksLogistics.repository.AdminRepository;
+import com.jayblinksLogistics.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

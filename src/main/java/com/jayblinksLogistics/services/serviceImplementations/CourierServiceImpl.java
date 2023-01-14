@@ -1,4 +1,4 @@
-package com.jayblinksLogistics.services;
+package com.jayblinksLogistics.services.serviceImplementations;
 
 import com.jayblinksLogistics.dto.request.DeliveryRequest;
 import com.jayblinksLogistics.dto.request.LoginRequest;
@@ -13,6 +13,9 @@ import com.jayblinksLogistics.exception.UserRegistrationException;
 import com.jayblinksLogistics.exception.UserUpdateException;
 import com.jayblinksLogistics.models.*;
 import com.jayblinksLogistics.repository.CourierRepository;
+import com.jayblinksLogistics.services.CourierServices;
+import com.jayblinksLogistics.services.OrderService;
+import com.jayblinksLogistics.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -22,7 +25,7 @@ import java.util.Set;
 
 @Qualifier("courierServiceImpl")
 @Component
-public class CourierServiceImpl implements UserServices, CourierServices{
+public class CourierServiceImpl implements UserServices, CourierServices {
 
     private final CourierRepository courierRepository;
     private final OrderService orderService;

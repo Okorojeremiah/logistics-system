@@ -1,4 +1,4 @@
-package com.jayblinksLogistics.services;
+package com.jayblinksLogistics.services.serviceImplementations;
 
 import com.jayblinksLogistics.dto.request.AddOrderRequest;
 import com.jayblinksLogistics.dto.request.DeliveryRequest;
@@ -6,6 +6,8 @@ import com.jayblinksLogistics.dto.response.DeliveryResponse;
 import com.jayblinksLogistics.exception.OrderNotFoundException;
 import com.jayblinksLogistics.models.*;
 import com.jayblinksLogistics.repository.OrderRepository;
+import com.jayblinksLogistics.services.OrderService;
+import com.jayblinksLogistics.services.SenderServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

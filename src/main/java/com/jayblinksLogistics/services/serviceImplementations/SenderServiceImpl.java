@@ -1,4 +1,4 @@
-package com.jayblinksLogistics.services;
+package com.jayblinksLogistics.services.serviceImplementations;
 
 import com.jayblinksLogistics.dto.request.AddOrderRequest;
 import com.jayblinksLogistics.dto.request.LoginRequest;
@@ -11,6 +11,9 @@ import com.jayblinksLogistics.dto.response.UserRegistrationResponse;
 import com.jayblinksLogistics.exception.*;
 import com.jayblinksLogistics.models.*;
 import com.jayblinksLogistics.repository.SenderRepository;
+import com.jayblinksLogistics.services.OrderService;
+import com.jayblinksLogistics.services.SenderServices;
+import com.jayblinksLogistics.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -20,7 +23,7 @@ import java.util.Set;
 
 //@Qualifier("senderServiceImpl")
 @Component
-public class SenderServiceImpl implements UserServices, SenderServices{
+public class SenderServiceImpl implements UserServices, SenderServices {
 
     @Autowired
     private SenderRepository senderRepository;
