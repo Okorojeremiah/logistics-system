@@ -2,6 +2,7 @@ package com.jayblinksLogistics.services;
 
 import com.jayblinksLogistics.dto.request.AddOrderRequest;
 import com.jayblinksLogistics.models.*;
+import com.jayblinksLogistics.models.enums.Category;
 import com.jayblinksLogistics.repository.OrderRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
