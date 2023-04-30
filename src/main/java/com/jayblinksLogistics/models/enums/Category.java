@@ -1,4 +1,4 @@
-package com.jayblinksLogistics.models;
+package com.jayblinksLogistics.models.enums;
 
 public enum Category {
     FRAGILE, NON_FRAGILE
