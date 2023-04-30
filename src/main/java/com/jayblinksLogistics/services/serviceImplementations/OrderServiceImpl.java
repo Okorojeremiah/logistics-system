@@ -5,6 +5,7 @@ import com.jayblinksLogistics.dto.request.DeliveryRequest;
 import com.jayblinksLogistics.dto.response.DeliveryResponse;
 import com.jayblinksLogistics.exception.OrderNotFoundException;
 import com.jayblinksLogistics.models.*;
+import com.jayblinksLogistics.models.enums.OrderStatus;
 import com.jayblinksLogistics.repository.OrderRepository;
 import com.jayblinksLogistics.services.OrderService;
 import com.jayblinksLogistics.services.SenderServices;
@@ -37,7 +38,6 @@ public class OrderServiceImpl implements OrderService {
         order.setReceiverLastName(addOrderRequest.getReceiverLastName());
         order.setReceiverPhoneNumber(addOrderRequest.getReceiverPhoneNumber());
         order.setReceiverAddress(addOrderRequest.getReceiverAddress());
-        order.setCurrentStatus(OrderStatus.PROCESSING);
         order.setTimePlaced(new Date());
 
         return orderRepository.save(order);
@@ -51,6 +51,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
+    }
+
+    @Override
+    public void saveOrder(Order order) {
+        orderRepository.save(order);
     }
 
     @Override
