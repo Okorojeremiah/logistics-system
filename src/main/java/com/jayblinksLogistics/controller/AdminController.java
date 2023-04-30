@@ -1,14 +1,16 @@
 package com.jayblinksLogistics.controller;
 
+import com.jayblinksLogistics.dto.request.CourierRequest;
 import com.jayblinksLogistics.dto.request.LoginRequest;
 import com.jayblinksLogistics.dto.request.UpdateUserRequest;
 import com.jayblinksLogistics.dto.request.UserRegistrationRequest;
+import com.jayblinksLogistics.dto.response.CourierResponse;
 import com.jayblinksLogistics.dto.response.LoginResponse;
 import com.jayblinksLogistics.dto.response.UpdateUserResponse;
 import com.jayblinksLogistics.dto.response.UserRegistrationResponse;
 import com.jayblinksLogistics.models.Courier;
 import com.jayblinksLogistics.models.Order;
-import com.jayblinksLogistics.models.OrderStatus;
+import com.jayblinksLogistics.models.enums.OrderStatus;
 import com.jayblinksLogistics.models.Sender;
 import com.jayblinksLogistics.services.AdminServices;
 import com.jayblinksLogistics.services.UserServices;
@@ -53,7 +55,7 @@ public class AdminController {
     }
 
     @GetMapping("/fetchOrdersByCurrentStatus/{orderStatus}")
-    public ResponseEntity<List<Order>> orders(@RequestBody @PathVariable OrderStatus orderStatus){
+    public ResponseEntity<List<Order>> orders(@PathVariable OrderStatus orderStatus){
         List<Order> orders = adminServices.findOrdersByCurrentStatus(orderStatus);
         return ResponseEntity.status(HttpStatus.OK).body(orders);
     }
@@ -64,22 +66,29 @@ public class AdminController {
     }
 
     @GetMapping("/findSender/{senderId}")
-    public ResponseEntity<Sender> findSender(@RequestBody @PathVariable String senderId){
+    public ResponseEntity<Sender> findSender(@PathVariable String senderId){
         return ResponseEntity.ok(adminServices.findSender(senderId));
     }
 
     @GetMapping("/findCourier/{courierId}")
-    public ResponseEntity<Courier> findCourier(@RequestBody @PathVariable String courierId){
+    public ResponseEntity<Courier> findCourier(@PathVariable String courierId){
         return ResponseEntity.ok(adminServices.findCourier(courierId));
     }
 
+    @PostMapping("/assignCourier")
+    public ResponseEntity<CourierResponse> assignCourier(@Valid @RequestBody CourierRequest courierRequest){
+        CourierResponse response = adminServices.assignCourier(courierRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
     @DeleteMapping("/deleteSender/{senderId}")
-    public void deleteSender(@RequestBody @PathVariable String senderId){
-        adminServices.deleteSender(senderId);
+    public void deleteSender(@PathVariable String senderId){
+        adminServices.deleteSenderAccount(senderId);
     }
 
     @DeleteMapping("/deleteCourier/{courierId}")
-    public void deleteCourier(@RequestBody @PathVariable String courierId){
-        adminServices.deleteSender(courierId);
+    public void deleteCourier(@PathVariable String courierId){
+        adminServices.deleteSenderAccount(courierId);
     }
+
+
 }
