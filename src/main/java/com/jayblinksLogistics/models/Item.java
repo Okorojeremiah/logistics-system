@@ -1,5 +1,6 @@
 package com.jayblinksLogistics.models;
 
+import com.jayblinksLogistics.models.enums.Category;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
