@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface SenderServices {
     List<Order> viewOrderHistory(String senderId);
-    AddOrderResponse cancelOrder(String orderId);
+    void cancelOrder(String orderId);
     AddOrderResponse placeOrder(AddOrderRequest addOrderRequest);
 
     OrderStatus checkDeliveryStatus(String orderId);

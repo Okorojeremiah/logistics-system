@@ -127,15 +127,10 @@ public class SenderServiceImpl implements UserServices, SenderServices {
                 .message("Order successful")
                 .build();
     }
-    public AddOrderResponse cancelOrder(String orderId){
+    public void cancelOrder(String orderId){
         Order order = orderService.getOrderById(orderId);
         order.setCurrentStatus(OrderStatus.CANCELLED);
         orderService.saveOrder(order);
-
-        return AddOrderResponse.builder()
-                .message("Order cancelled successfully")
-                .statusCode(201)
-                .build();
     }
 
     @Override
