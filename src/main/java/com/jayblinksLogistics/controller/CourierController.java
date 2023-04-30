@@ -4,12 +4,7 @@ import com.jayblinksLogistics.dto.request.DeliveryRequest;
 import com.jayblinksLogistics.dto.request.LoginRequest;
 import com.jayblinksLogistics.dto.request.UpdateUserRequest;
 import com.jayblinksLogistics.dto.request.UserRegistrationRequest;
-import com.jayblinksLogistics.dto.response.DeliveryResponse;
-import com.jayblinksLogistics.dto.response.LoginResponse;
-import com.jayblinksLogistics.dto.response.UpdateUserResponse;
-import com.jayblinksLogistics.dto.response.UserRegistrationResponse;
-import com.jayblinksLogistics.models.Order;
-import com.jayblinksLogistics.models.OrderStatus;
+import com.jayblinksLogistics.dto.response.*;
 import com.jayblinksLogistics.services.CourierServices;
 import com.jayblinksLogistics.services.UserServices;
 import jakarta.validation.Valid;
@@ -18,8 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/courier")
@@ -46,15 +39,9 @@ public class CourierController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<UpdateUserResponse> update(@Valid @RequestBody UpdateUserRequest updateUserRequest){
+    public ResponseEntity<UpdateUserResponse> updateAccount(@Valid @RequestBody UpdateUserRequest updateUserRequest){
         UpdateUserResponse response = userServices.update(updateUserRequest);
         return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @GetMapping("/checkOrderStatus")
-    public ResponseEntity<OrderStatus> checkOrderStatus(@RequestBody String orderId){
-        OrderStatus status = courierServices.checkDeliveryStatus(orderId);
-        return ResponseEntity.status(HttpStatus.OK).body(status);
     }
 
     @GetMapping("/confirmOrderStatus")
@@ -63,9 +50,15 @@ public class CourierController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/fetchOrdersByCurrentStatus/{orderStatus}")
-    public ResponseEntity<List<Order>> orders(@RequestBody @PathVariable OrderStatus orderStatus){
-        List<Order> orders = courierServices.findOrdersByCurrentStatus(orderStatus);
-        return ResponseEntity.status(HttpStatus.OK).body(orders);
+    @GetMapping("/checkMyStatus/{courierId}")
+    public ResponseEntity<CourierStatusResponse> checkCourierStatus(@PathVariable String courierId){
+        CourierStatusResponse response = courierServices.checkCurrentStatus(courierId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/fetchOrdersByCurrentStatus/{senderId}")
+    public ResponseEntity<DeliveryResponse> acceptOrder(@PathVariable String senderId){
+        DeliveryResponse response = courierServices.acceptSenderOrder(senderId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
