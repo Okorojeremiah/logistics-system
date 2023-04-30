@@ -8,6 +8,8 @@ import com.jayblinksLogistics.dto.response.LoginResponse;
 import com.jayblinksLogistics.dto.response.UpdateUserResponse;
 import com.jayblinksLogistics.dto.response.UserRegistrationResponse;
 import com.jayblinksLogistics.models.*;
+import com.jayblinksLogistics.models.enums.Category;
+import com.jayblinksLogistics.models.enums.OrderStatus;
 import com.jayblinksLogistics.repository.AdminRepository;
 import com.jayblinksLogistics.repository.CourierRepository;
 import com.jayblinksLogistics.repository.OrderRepository;
@@ -179,7 +181,7 @@ class AdminServiceImplTest {
     void testThatAdminCanDeleteSenderFromDataBase() {
         UserRegistrationResponse senderResponse = senderServices.register(senderRegistrationRequest);
         Sender sender = moreAdminServices.findSender(senderResponse.getUserId());
-        moreAdminServices.deleteSender(sender.getUserId());
+        moreAdminServices.deleteSenderAccount(sender.getUserId());
         Optional<Sender> foundSender = senderRepository.findByUserId(sender.getUserId());
         assertEquals(Optional.empty(), foundSender);
     }
@@ -188,7 +190,7 @@ class AdminServiceImplTest {
     void testThatAdminCanDeleteCourierFromDataBase() {
         UserRegistrationResponse courierResponse = courierService.register(senderRegistrationRequest);
         Courier courier = moreAdminServices.findCourier(courierResponse.getUserId());
-        moreAdminServices.deleteCourier(courier.getUserId());
+        moreAdminServices.deleteCourierAccount(courier.getUserId());
         Optional<Sender> foundCourier = senderRepository.findByUserId(courier.getUserId());
         assertEquals(Optional.empty(), foundCourier);
     }
