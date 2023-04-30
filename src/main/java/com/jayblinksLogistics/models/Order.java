@@ -1,12 +1,10 @@
 package com.jayblinksLogistics.models;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import com.jayblinksLogistics.models.enums.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -26,7 +24,7 @@ public class Order {
     private String receiverPhoneNumber;
     private Address receiverAddress;
     private List<Item> items;
-    private OrderStatus currentStatus;
+    private OrderStatus currentStatus = OrderStatus.PROCESSING;
     private Date timePlaced;
 
 }
