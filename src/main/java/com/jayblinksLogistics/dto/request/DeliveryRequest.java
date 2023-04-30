@@ -1,6 +1,6 @@
 package com.jayblinksLogistics.dto.request;
 
-import com.jayblinksLogistics.models.OrderStatus;
+import com.jayblinksLogistics.models.enums.OrderStatus;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
