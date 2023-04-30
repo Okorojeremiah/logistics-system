@@ -5,7 +5,7 @@ import com.jayblinksLogistics.dto.request.AddOrderRequest;
 import com.jayblinksLogistics.dto.request.DeliveryRequest;
 import com.jayblinksLogistics.dto.response.DeliveryResponse;
 import com.jayblinksLogistics.models.Order;
-import com.jayblinksLogistics.models.OrderStatus;
+import com.jayblinksLogistics.models.enums.OrderStatus;
 
 import java.util.List;
 
@@ -14,6 +14,7 @@ public interface OrderService {
     Order getOrderById(String id);
     List<Order> getAllOrders();
 
+    void saveOrder(Order order);
     List<Order> getOrdersByCurrentStatus(OrderStatus orderStatus);
     void deleteOrder(String orderId);
     List<Order> viewOrderHistory(String senderId);
