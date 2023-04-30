@@ -10,6 +10,7 @@ import com.jayblinksLogistics.dto.response.UpdateUserResponse;
 import com.jayblinksLogistics.dto.response.UserRegistrationResponse;
 import com.jayblinksLogistics.exception.*;
 import com.jayblinksLogistics.models.*;
+import com.jayblinksLogistics.models.enums.OrderStatus;
 import com.jayblinksLogistics.repository.SenderRepository;
 import com.jayblinksLogistics.services.OrderService;
 import com.jayblinksLogistics.services.SenderServices;
@@ -118,17 +119,28 @@ public class SenderServiceImpl implements UserServices, SenderServices {
         Sender sender = senderRepository.findByUserId(addOrderRequest.getSenderId()).orElseThrow(()-> new UserNotFoundException("Sender not found"));
         Order order = orderService.addOrder(addOrderRequest);
 
-        AddOrderResponse response = new AddOrderResponse();
-        response.setOrderId(order.getOrderId());
-        response.setSenderId(sender.getUserId());
-        response.setStatusCode(201);
-        response.setOrderStatus(OrderStatus.PROCESSING);
-        response.setMessage("Order successful");
-
-        return response;
+        return AddOrderResponse.builder()
+                .orderId(order.getOrderId())
+                .senderId(sender.getUserId())
+                .statusCode(201)
+                .orderStatus(order.getCurrentStatus())
+                .message("Order successful")
+                .build();
     }
-    public void cancelOrder(String orderId){
-        orderService.deleteOrder(orderId);
+    public AddOrderResponse cancelOrder(String orderId){
+        Order order = orderService.getOrderById(orderId);
+        order.setCurrentStatus(OrderStatus.CANCELLED);
+        orderService.saveOrder(order);
+
+        return AddOrderResponse.builder()
+                .message("Order cancelled successfully")
+                .statusCode(201)
+                .build();
+    }
+
+    @Override
+    public OrderStatus checkDeliveryStatus(String orderId){
+        return orderService.checkOrderStatus(orderId);
     }
 
     public List<Order> viewOrderHistory(String senderId){
