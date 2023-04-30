@@ -1,8 +1,7 @@
 package com.jayblinksLogistics.repository;
 
 import com.jayblinksLogistics.models.Order;
-import com.jayblinksLogistics.models.OrderStatus;
-import org.springframework.beans.factory.annotation.Qualifier;
+import com.jayblinksLogistics.models.enums.OrderStatus;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
