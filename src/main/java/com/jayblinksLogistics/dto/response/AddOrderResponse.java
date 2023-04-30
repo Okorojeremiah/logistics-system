@@ -1,9 +1,8 @@
 package com.jayblinksLogistics.dto.response;
 
-import com.jayblinksLogistics.models.OrderStatus;
+import com.jayblinksLogistics.models.enums.OrderStatus;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
 
 @Data
 @Builder
