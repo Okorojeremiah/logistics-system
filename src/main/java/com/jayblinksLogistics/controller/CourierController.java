@@ -52,7 +52,7 @@ public class CourierController {
 
     @GetMapping("/checkMyStatus/{courierId}")
     public ResponseEntity<CourierStatusResponse> checkCourierStatus(@PathVariable String courierId){
-        CourierStatusResponse response = courierServices.checkCurrentStatus(courierId);
+        CourierStatusResponse response = courierServices.checkCourierStatus(courierId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

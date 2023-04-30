@@ -4,22 +4,24 @@ import com.jayblinksLogistics.dto.request.DeliveryRequest;
 import com.jayblinksLogistics.dto.request.LoginRequest;
 import com.jayblinksLogistics.dto.request.UpdateUserRequest;
 import com.jayblinksLogistics.dto.request.UserRegistrationRequest;
-import com.jayblinksLogistics.dto.response.DeliveryResponse;
-import com.jayblinksLogistics.dto.response.LoginResponse;
-import com.jayblinksLogistics.dto.response.UpdateUserResponse;
-import com.jayblinksLogistics.dto.response.UserRegistrationResponse;
+import com.jayblinksLogistics.dto.response.*;
 import com.jayblinksLogistics.exception.UserLoginException;
+import com.jayblinksLogistics.exception.UserNotFoundException;
 import com.jayblinksLogistics.exception.UserRegistrationException;
 import com.jayblinksLogistics.exception.UserUpdateException;
 import com.jayblinksLogistics.models.*;
+import com.jayblinksLogistics.models.enums.CourierStatus;
+import com.jayblinksLogistics.models.enums.OrderStatus;
 import com.jayblinksLogistics.repository.CourierRepository;
 import com.jayblinksLogistics.services.CourierServices;
 import com.jayblinksLogistics.services.OrderService;
+import com.jayblinksLogistics.services.SenderServices;
 import com.jayblinksLogistics.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -28,11 +30,13 @@ import java.util.Set;
 public class CourierServiceImpl implements UserServices, CourierServices {
 
     private final CourierRepository courierRepository;
+    private final SenderServices senderServices;
     private final OrderService orderService;
 
     @Autowired
-    public CourierServiceImpl(CourierRepository courierRepository, OrderService orderService){
+    public CourierServiceImpl(CourierRepository courierRepository, SenderServices senderServices, OrderService orderService){
         this.courierRepository = courierRepository;
+        this.senderServices = senderServices;
         this.orderService = orderService;
     }
 
@@ -115,8 +119,26 @@ public class CourierServiceImpl implements UserServices, CourierServices {
     }
 
     @Override
-    public List<Order> findOrdersByCurrentStatus(OrderStatus orderStatus) {
-        return orderService.getOrdersByCurrentStatus(orderStatus);
+    public void save(Courier courier) {
+        courierRepository.save(courier);
+    }
+
+    @Override
+    public CourierStatusResponse checkCourierStatus(String courierId) {
+        Courier courier = findCourier(courierId);
+
+        CourierStatusResponse response = new CourierStatusResponse();
+        if (courier.getStatus() == CourierStatus.ASSIGNED) {
+            courier.getSenderOrders().stream()
+                    .forEach(order -> response.getAssignedOrders().add(order));
+            response.setStatus(courier.getStatus());
+            response.setDate(courier.getDate());
+            return response;
+        }
+
+        response.setStatus(courier.getStatus());
+        response.setDate(LocalDate.now());
+        return response;
     }
 
     @Override
@@ -125,7 +147,21 @@ public class CourierServiceImpl implements UserServices, CourierServices {
     }
 
     @Override
-    public OrderStatus checkDeliveryStatus(String orderId){
-        return orderService.checkOrderStatus(orderId);
+    public DeliveryResponse acceptSenderOrder(String senderId) {
+        Sender foundSender = senderServices.findSender(senderId);
+        if (foundSender == null){
+            throw new UserNotFoundException("Sender not found");
+        }
+        List<Order> orders = foundSender.getOrders();
+        orders.forEach(order -> order.setCurrentStatus(OrderStatus.ENROUTE));
+        orders.forEach(orderService::saveOrder);
+
+        DeliveryResponse deliveryResponse = new DeliveryResponse();
+        deliveryResponse.setMessage("Order accepted");
+        deliveryResponse.setStatusCode(201);
+        return deliveryResponse;
     }
+
+
+
 }
