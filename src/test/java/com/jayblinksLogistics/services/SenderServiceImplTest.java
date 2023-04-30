@@ -10,7 +10,7 @@ import com.jayblinksLogistics.dto.response.LoginResponse;
 import com.jayblinksLogistics.dto.response.UpdateUserResponse;
 import com.jayblinksLogistics.dto.response.UserRegistrationResponse;
 import com.jayblinksLogistics.models.Address;
-import com.jayblinksLogistics.models.Category;
+import com.jayblinksLogistics.models.enums.Category;
 import com.jayblinksLogistics.models.Item;
 import com.jayblinksLogistics.models.Order;
 import com.jayblinksLogistics.repository.OrderRepository;
