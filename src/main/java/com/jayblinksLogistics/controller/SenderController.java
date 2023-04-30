@@ -10,6 +10,7 @@ import com.jayblinksLogistics.dto.response.LoginResponse;
 import com.jayblinksLogistics.dto.response.UpdateUserResponse;
 import com.jayblinksLogistics.dto.response.UserRegistrationResponse;
 import com.jayblinksLogistics.models.Order;
+import com.jayblinksLogistics.models.enums.OrderStatus;
 import com.jayblinksLogistics.services.SenderServices;
 import com.jayblinksLogistics.services.UserServices;
 import jakarta.validation.Valid;
@@ -47,18 +48,24 @@ public class SenderController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<UpdateUserResponse> update(@Valid @RequestBody UpdateUserRequest updateUserRequest){
+    public ResponseEntity<UpdateUserResponse> updateAccount(@Valid @RequestBody UpdateUserRequest updateUserRequest){
         UpdateUserResponse response = userServices.update(updateUserRequest);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/viewOrderHistory/{senderId}")
-    public ResponseEntity<List<Order>> viewOrderHistory(@RequestBody @PathVariable String senderId){
+    public ResponseEntity<List<Order>> viewOrderHistory(@PathVariable String senderId){
         List<Order> orders = senderServices.viewOrderHistory(senderId);
         return ResponseEntity.status(HttpStatus.OK).body(orders);
     }
+
+    @GetMapping("/checkOrderStatus/{orderId}")
+    public ResponseEntity<OrderStatus> checkOrderStatus(@PathVariable String orderId){
+        OrderStatus status = senderServices.checkDeliveryStatus(orderId);
+        return ResponseEntity.status(HttpStatus.OK).body(status);
+    }
     @DeleteMapping("/cancelOrder/{orderId}")
-    public void cancelOrder(@RequestBody @PathVariable String orderId){
+    public void cancelOrder(@PathVariable String orderId){
         senderServices.cancelOrder(orderId);
     }
 
