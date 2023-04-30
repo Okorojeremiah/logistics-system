@@ -1,8 +1,10 @@
 package com.jayblinksLogistics.services.serviceImplementations;
 
+import com.jayblinksLogistics.dto.request.CourierRequest;
 import com.jayblinksLogistics.dto.request.LoginRequest;
 import com.jayblinksLogistics.dto.request.UpdateUserRequest;
 import com.jayblinksLogistics.dto.request.UserRegistrationRequest;
+import com.jayblinksLogistics.dto.response.CourierResponse;
 import com.jayblinksLogistics.dto.response.LoginResponse;
 import com.jayblinksLogistics.dto.response.UpdateUserResponse;
 import com.jayblinksLogistics.dto.response.UserRegistrationResponse;
@@ -10,13 +12,17 @@ import com.jayblinksLogistics.exception.UserLoginException;
 import com.jayblinksLogistics.exception.UserRegistrationException;
 import com.jayblinksLogistics.exception.UserUpdateException;
 import com.jayblinksLogistics.models.*;
+import com.jayblinksLogistics.models.enums.CourierStatus;
+import com.jayblinksLogistics.models.enums.OrderStatus;
 import com.jayblinksLogistics.repository.AdminRepository;
 import com.jayblinksLogistics.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class AdminServiceImpl implements UserServices, AdminServices {
@@ -112,20 +118,43 @@ public class AdminServiceImpl implements UserServices, AdminServices {
     }
 
     @Override
-    public void deleteSender(String userId) {
+    public void deleteSenderAccount(String userId) {
         Sender sender = findSender(userId);
         senderServices.deleteSender(sender.getUserId());
     }
 
     @Override
-    public void deleteCourier(String courierId){
+    public CourierResponse assignCourier(CourierRequest courierRequest) {
+        Courier courier = courierServices.findCourier(courierRequest.getCourierId());
+        Sender sender = senderServices.findSender(courierRequest.getSenderId());
+
+        sender.getOrders().stream().filter(order -> order.getCurrentStatus()
+                        .equals(OrderStatus.PROCESSING))
+                .forEach(order -> courier.getSenderOrders().add(order));
+
+        courier.setStatus(CourierStatus.ASSIGNED);
+        courier.setDate(LocalDate.now());
+        courierServices.save(courier);
+
+        return CourierResponse.builder()
+                .message(String.format("Courier with id %s assigned", courier.getUserId()))
+                .statusCode(201)
+                .build();
+    }
+
+    @Override
+    public void deleteCourierAccount(String courierId){
         Courier courier = findCourier(courierId);
         courierServices.deleteCourier(courier.getUserId());
     }
 
     @Override
     public List<Order> viewAllOrders() {
-        return orderServices.getAllOrders();
+
+        return orderServices.getAllOrders().stream()
+                .filter(order -> order.getCurrentStatus()
+                        .equals(OrderStatus.PROCESSING))
+                .collect(Collectors.toList());
     }
 
     @Override
