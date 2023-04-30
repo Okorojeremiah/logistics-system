@@ -1,5 +1,6 @@
 package com.jayblinksLogistics.models;
 
+import com.jayblinksLogistics.models.enums.Category;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

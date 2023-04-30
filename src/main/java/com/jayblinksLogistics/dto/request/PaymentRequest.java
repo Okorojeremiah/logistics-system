@@ -1,6 +1,6 @@
 package com.jayblinksLogistics.dto.request;
 
-import com.jayblinksLogistics.models.Category;
+import com.jayblinksLogistics.models.enums.Category;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
