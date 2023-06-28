@@ -17,6 +17,7 @@ import com.jayblinksLogistics.models.enums.OrderStatus;
 import com.jayblinksLogistics.repository.AdminRepository;
 import com.jayblinksLogistics.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -46,7 +47,7 @@ public class AdminServiceImpl implements UserServices, AdminServices {
         UserRegistrationResponse response = new UserRegistrationResponse();
         response.setUserId(admin.getUserId());
         response.setMessage("Registration successful");
-        response.setStatusCode(201);
+        response.setStatusCode(HttpStatus.CREATED);
         return response;
     }
 
@@ -90,7 +91,7 @@ public class AdminServiceImpl implements UserServices, AdminServices {
 
         response.setUserId(foundAdmin.getUserId());
         response.setMessage("Update successful");
-        response.setStatusCode(201);
+        response.setStatusCode(HttpStatus.CREATED);
         return response;
     }
 
@@ -138,7 +139,7 @@ public class AdminServiceImpl implements UserServices, AdminServices {
 
         return CourierResponse.builder()
                 .message(String.format("Courier with id %s assigned", courier.getUserId()))
-                .statusCode(201)
+                .statusCode(HttpStatus.CREATED)
                 .build();
     }
 

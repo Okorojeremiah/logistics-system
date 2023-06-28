@@ -19,6 +19,7 @@ import com.jayblinksLogistics.services.SenderServices;
 import com.jayblinksLogistics.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -47,7 +48,7 @@ public class CourierServiceImpl implements UserServices, CourierServices {
         UserRegistrationResponse response = new UserRegistrationResponse();
         response.setUserId(courier.getUserId());
         response.setMessage("Registration successful");
-        response.setStatusCode(201);
+        response.setStatusCode(HttpStatus.CREATED);
         return response;
     }
 
@@ -91,7 +92,7 @@ public class CourierServiceImpl implements UserServices, CourierServices {
 
         response.setUserId(foundCourier.getUserId());
         response.setMessage("Update successful");
-        response.setStatusCode(201);
+        response.setStatusCode(HttpStatus.CREATED);
         return response;
     }
 
@@ -158,7 +159,7 @@ public class CourierServiceImpl implements UserServices, CourierServices {
 
         DeliveryResponse deliveryResponse = new DeliveryResponse();
         deliveryResponse.setMessage("Order accepted");
-        deliveryResponse.setStatusCode(201);
+        deliveryResponse.setStatusCode(HttpStatus.CREATED);
         return deliveryResponse;
     }
 

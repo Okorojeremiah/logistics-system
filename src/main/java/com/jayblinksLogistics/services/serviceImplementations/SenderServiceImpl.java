@@ -17,6 +17,7 @@ import com.jayblinksLogistics.services.SenderServices;
 import com.jayblinksLogistics.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public class SenderServiceImpl implements UserServices, SenderServices {
         UserRegistrationResponse response = new UserRegistrationResponse();
         response.setUserId(sender.getUserId());
         response.setMessage("Registration successful");
-        response.setStatusCode(201);
+        response.setStatusCode(HttpStatus.CREATED);
         return response;
     }
 
@@ -88,7 +89,7 @@ public class SenderServiceImpl implements UserServices, SenderServices {
 
         response.setUserId(foundSender.getUserId());
         response.setMessage("Update successful");
-        response.setStatusCode(201);
+        response.setStatusCode(HttpStatus.CREATED);
         return response;
     }
 
@@ -122,7 +123,7 @@ public class SenderServiceImpl implements UserServices, SenderServices {
         return AddOrderResponse.builder()
                 .orderId(order.getOrderId())
                 .senderId(sender.getUserId())
-                .statusCode(201)
+                .statusCode(HttpStatus.CREATED)
                 .orderStatus(order.getCurrentStatus())
                 .message("Order successful")
                 .build();
